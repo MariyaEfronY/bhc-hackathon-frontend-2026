@@ -125,14 +125,15 @@ export default function DualModeJobSearch() {
                 }
 
         try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL
+            // Read directly without destructuring and strip any trailing slash
+            const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+            const baseUrl = rawBaseUrl.replace(/\/+$/, '')
 
             const res = await fetch(`${baseUrl}/api/skill-analysis`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             })
-
             const json: ApiResponse = await res.json()
             if (!res.ok || !json.success || !json.data) {
                 throw new Error(json.error || 'Failed to analyze request.')
