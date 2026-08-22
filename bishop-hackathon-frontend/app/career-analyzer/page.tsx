@@ -125,7 +125,7 @@ export default function DualModeJobSearch() {
                 }
 
         try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL
 
             const res = await fetch(`${baseUrl}/api/skill-analysis`, {
                 method: 'POST',
