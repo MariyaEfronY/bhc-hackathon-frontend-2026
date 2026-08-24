@@ -75,8 +75,7 @@ export default function ResumeAnalysisPage() {
         setError(null);
 
         const formData = new FormData();
-        // CHANGED: Match 'resume' key expected by backend upload.single('resume')
-        formData.append('resume', file);
+        formData.append('file', file);
 
         try {
             const res = await fetch('http://localhost:8000/api/resume-analysis', {
