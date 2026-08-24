@@ -8,13 +8,13 @@ type SearchMode = 'text' | 'voice'
 export default function DualModeJobSearch() {
     const [searchMode, setSearchMode] = useState<SearchMode>('text')
 
-    // Structured form inputs (Text Mode)
+    // Cleaned form state without hardcoded user data
     const [formData, setFormData] = useState({
-        name: 'Efron',
-        course: 'MCA',
-        skills: 'JavaScript, TypeScript, React, Next.js, MongoDB',
-        interests: 'Web Development, AI',
-        location: 'Remote',
+        name: '',
+        targetRole: '',
+        skills: '',
+        interests: '',
+        location: '',
         responseLimit: 5,
     })
 
@@ -108,24 +108,23 @@ export default function DualModeJobSearch() {
         const payload =
             searchMode === 'voice'
                 ? {
-                    name: formData.name,
-                    course: formData.course,
+                    name: formData.name || 'User',
+                    targetRole: formData.targetRole,
                     skills: [naturalDescription], // Passes raw instruction string directly
                     interests: ['Voice Search'],
-                    location: formData.location,
+                    location: formData.location || 'Remote',
                     responseLimit: Number(formData.responseLimit),
                 }
                 : {
-                    name: formData.name,
-                    course: formData.course,
+                    name: formData.name || 'User',
+                    targetRole: formData.targetRole,
                     skills: formData.skills.split(',').map((s) => s.trim()).filter(Boolean),
                     interests: formData.interests.split(',').map((i) => i.trim()).filter(Boolean),
-                    location: formData.location,
+                    location: formData.location || 'Remote',
                     responseLimit: Number(formData.responseLimit),
                 }
 
         try {
-            // Read directly without destructuring and strip any trailing slash
             const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || ''
             const baseUrl = rawBaseUrl.replace(/\/+$/, '')
 
@@ -175,12 +174,12 @@ export default function DualModeJobSearch() {
                 <header className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
                     <div>
                         <h1 className={`text-3xl md:text-4xl font-extrabold ${accentText} transition-colors`}>
-                            {isVoiceTheme ? '🎙️ Voice AI Career Search' : '💻 Textual Career Search'}
+                            {isVoiceTheme ? '🎙️ Voice AI Career Search' : '💻 Career Skill Analysis'}
                         </h1>
                         <p className="text-slate-400 text-sm mt-1">
                             {isVoiceTheme
-                                ? 'Speak your career background naturally in real-time.'
-                                : 'Enter structured skills and search parameters manually.'}
+                                ? 'Speak your professional experience, skills, or targets naturally.'
+                                : 'Enter your skills and target industry for personalized career insights.'}
                         </p>
                     </div>
 
@@ -213,6 +212,30 @@ export default function DualModeJobSearch() {
                     {/* Controls Panel */}
                     <section className={`lg:col-span-5 bg-slate-900/90 backdrop-blur border ${accentBorder} p-6 rounded-2xl shadow-xl space-y-6 transition-colors`}>
 
+                        {/* Shared User Profile Fields */}
+                        <div className="grid grid-cols-2 gap-3 pb-2">
+                            <div>
+                                <label className="block text-xs uppercase text-slate-400 mb-1">Your Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Alex Smith"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs uppercase text-slate-400 mb-1">Target Role / Domain</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g., Finance Lead, Product Manager"
+                                    value={formData.targetRole}
+                                    onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                />
+                            </div>
+                        </div>
+
                         {/* VOICE MODE INTERFACE */}
                         {isVoiceTheme ? (
                             <div className="space-y-4">
@@ -241,12 +264,12 @@ export default function DualModeJobSearch() {
                                         placeholder={
                                             isListening
                                                 ? 'Listening to your speech... Speak clearly into your mic.'
-                                                : 'Click "Start Recording" or type your complete career background here...'
+                                                : 'Click "Start Recording" or speak your skills, background, and target career goals here...'
                                         }
                                         className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     />
                                     <p className="text-[11px] text-slate-500 mt-1">
-                                        Speech gets captured live into this description box and sent directly to Groq AI.
+                                        Speech will be transcribed live and processed directly by the AI model.
                                     </p>
                                 </div>
                             </div>
@@ -255,26 +278,28 @@ export default function DualModeJobSearch() {
                             /* TEXT MODE INTERFACE */
                             <div className="space-y-4">
                                 <span className="text-xs uppercase tracking-wider text-cyan-300 font-semibold">
-                                    Structured Fields
+                                    Structured Details
                                 </span>
 
                                 <div>
                                     <label className="block text-xs uppercase text-slate-400 mb-1">Skills (comma separated)</label>
                                     <input
                                         type="text"
+                                        placeholder="e.g., Financial Auditing, Tax Compliance, Financial Modeling"
                                         value={formData.skills}
                                         onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-200"
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase text-slate-400 mb-1">Interests</label>
+                                    <label className="block text-xs uppercase text-slate-400 mb-1">Interests & Specializations</label>
                                     <input
                                         type="text"
+                                        placeholder="e.g., Corporate Finance, Strategic Planning, Risk Assessment"
                                         value={formData.interests}
                                         onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-200"
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                 </div>
                             </div>
@@ -284,21 +309,22 @@ export default function DualModeJobSearch() {
                         <form onSubmit={handleSubmit} className="space-y-4 pt-2 border-t border-slate-800">
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs uppercase text-slate-400 mb-1">Location</label>
+                                    <label className="block text-xs uppercase text-slate-400 mb-1">Preferred Location</label>
                                     <input
                                         type="text"
+                                        placeholder="e.g., Remote / Hybrid / City"
                                         value={formData.location}
                                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200"
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase text-slate-400 mb-1">Job Count</label>
+                                    <label className="block text-xs uppercase text-slate-400 mb-1">Results Limit</label>
                                     <select
                                         value={formData.responseLimit}
                                         onChange={(e) => setFormData({ ...formData, responseLimit: Number(e.target.value) })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200"
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     >
                                         <option value={3}>3 Roles</option>
                                         <option value={5}>5 Roles</option>
@@ -307,7 +333,7 @@ export default function DualModeJobSearch() {
                                 </div>
                             </div>
 
-                            {error && <div className="text-red-400 text-xs bg-red-950/50 p-2.5 rounded-lg">{error}</div>}
+                            {error && <div className="text-red-400 text-xs bg-red-950/50 p-2.5 rounded-lg border border-red-800/50">{error}</div>}
 
                             <button
                                 type="submit"
@@ -324,8 +350,8 @@ export default function DualModeJobSearch() {
                         {!result && !loading && (
                             <div className="text-center text-slate-500 py-24">
                                 {isVoiceTheme
-                                    ? 'Click "Start Recording", describe your career skills, and click Analyze.'
-                                    : 'Fill in your technical profile and click Analyze.'}
+                                    ? 'Click "Start Recording", explain your career background, and click Analyze.'
+                                    : 'Fill in your skills profile or target domain and click Analyze.'}
                             </div>
                         )}
 
