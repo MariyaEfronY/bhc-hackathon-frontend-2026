@@ -1,43 +1,9 @@
 'use client';
 
-import React, { useState, JSX, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React, { JSX } from 'react';
 
 export default function LoginPage(): JSX.Element {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const router = useRouter();
-
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-
-    const handleManualSignIn = async (e: FormEvent): Promise<void> => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
-
-        try {
-            const res = await fetch(`${backendUrl}/api/auth/signin`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await res.json();
-            if (data.success) {
-                router.push('/dashboard');
-            } else {
-                setError(data.message || 'Failed to sign in');
-            }
-        } catch {
-            setError('An unexpected connection error occurred.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleGoogleSignIn = (): void => {
         window.location.href = `${backendUrl}/api/auth/google`;
@@ -47,34 +13,7 @@ export default function LoginPage(): JSX.Element {
         <div style={styles.container}>
             <div style={styles.card}>
                 <h1 style={styles.title}>Welcome Back</h1>
-                <p style={styles.subtitle}>Sign in to access your portal</p>
-
-                {error && <div style={styles.error}>{error}</div>}
-
-                {/* Form Login */}
-                <form onSubmit={handleManualSignIn} style={styles.form}>
-                    <input
-                        type="email"
-                        placeholder="Email Address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
-                    <button type="submit" disabled={loading} style={styles.submitBtn}>
-                        {loading ? 'Authenticating...' : 'Sign In with Email'}
-                    </button>
-                </form>
-
-                <div style={styles.divider}>OR</div>
+                <p style={styles.subtitle}>Sign in with Google to access your portal</p>
 
                 {/* Google Login */}
                 <button onClick={handleGoogleSignIn} type="button" style={styles.googleBtn}>
@@ -86,13 +25,6 @@ export default function LoginPage(): JSX.Element {
                     </svg>
                     Sign In with Google
                 </button>
-
-                <p style={styles.footerText}>
-                    Need an account?{' '}
-                    <Link href="/auth/signup" style={styles.link}>
-                        Sign Up with Google
-                    </Link>
-                </p>
             </div>
         </div>
     );
@@ -102,14 +34,7 @@ const styles: Record<string, React.CSSProperties> = {
     container: { display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', color: '#ffffff' },
     card: { padding: '2.5rem', borderRadius: '12px', backgroundColor: '#1e293b', width: '100%', maxWidth: '420px', textAlign: 'center' },
     title: { fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '0.5rem' },
-    subtitle: { color: '#94a3b8', marginBottom: '1.5rem', fontSize: '0.9rem' },
-    error: { backgroundColor: '#ef444420', color: '#f87171', padding: '0.75rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.85rem' },
-    form: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-    input: { padding: '0.75rem', borderRadius: '6px', border: '1px solid #334155', backgroundColor: '#0f172a', color: '#fff', outline: 'none' },
-    submitBtn: { padding: '0.75rem', borderRadius: '6px', border: 'none', backgroundColor: '#2563eb', color: '#fff', fontWeight: '600', cursor: 'pointer' },
-    divider: { margin: '1.5rem 0', color: '#64748b', fontSize: '0.8rem', fontWeight: 'bold' },
-    googleBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem', borderRadius: '8px', border: 'none', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', cursor: 'pointer' },
-    icon: { width: '18px', height: '18px' },
-    footerText: { marginTop: '1.5rem', fontSize: '0.85rem', color: '#94a3b8' },
-    link: { color: '#60a5fa', textDecoration: 'none', fontWeight: 'bold' },
+    subtitle: { color: '#94a3b8', marginBottom: '2rem', fontSize: '0.9rem' },
+    googleBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%', padding: '0.85rem', borderRadius: '8px', border: 'none', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', fontSize: '1rem', cursor: 'pointer' },
+    icon: { width: '20px', height: '20px' },
 };
