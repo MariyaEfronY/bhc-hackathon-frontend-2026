@@ -24,17 +24,7 @@ export default function RootLayout({
           {children}
         </div>
 
-        {/* Global Footer */}
-        <footer className="relative z-10 border-t border-slate-900 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>© {new Date().getFullYear()} CareerSphere AI. Built for Next.js App Router.</p>
-            <div className="flex items-center gap-6 text-slate-400">
-              <a href="#analyzer" className="hover:text-cyan-400 transition-colors">Analyzer</a>
-              <a href="#roadmap" className="hover:text-cyan-400 transition-colors">Skill Graph</a>
-              <a href="/login" className="hover:text-cyan-400 transition-colors">Portal Login</a>
-            </div>
-          </div>
-        </footer>
+
 
       </body>
     </html>
