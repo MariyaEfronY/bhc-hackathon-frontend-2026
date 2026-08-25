@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Sparkles, LogIn, UserPlus } from 'lucide-react';
 
 interface NavigationProps {
@@ -28,23 +29,21 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                     <span>AI Ready</span>
                 </div>
 
-                <button
-                    type="button"
-                    onClick={onSignIn}
+                <Link
+                    href="/auth/login"
                     className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-full transition-all"
                 >
                     <LogIn className="h-3.5 w-3.5 text-cyan-400" />
                     <span>Sign In</span>
-                </button>
+                </Link>
 
-                <button
-                    type="button"
-                    onClick={onSignUp}
+                <Link
+                    href="/auth/signup"
                     className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full shadow-md transition-all active:scale-95"
                 >
                     <UserPlus className="h-3.5 w-3.5 text-purple-400" />
                     <span>Sign Up</span>
-                </button>
+                </Link>
             </div>
         </header>
     );
