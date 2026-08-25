@@ -1,9 +1,25 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React, { useEffect, JSX } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage(): JSX.Element {
+    const router = useRouter();
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+    // Automatically redirect to student dashboard if already logged in
+    useEffect(() => {
+        fetch(`${backendUrl}/api/auth/current-user`, { credentials: 'include' })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success && data.user) {
+                    router.replace('/student/dashboard');
+                }
+            })
+            .catch(() => {
+                // User is not logged in; remain on signup page
+            });
+    }, [router, backendUrl]);
 
     const handleGoogleAuth = (): void => {
         window.location.href = `${backendUrl}/api/auth/google`;

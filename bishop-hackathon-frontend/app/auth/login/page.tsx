@@ -1,9 +1,25 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React, { useEffect, JSX } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage(): JSX.Element {
+    const router = useRouter();
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+    // Automatically redirect to student dashboard if already logged in
+    useEffect(() => {
+        fetch(`${backendUrl}/api/auth/current-user`, { credentials: 'include' })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success && data.user) {
+                    router.replace('/student/dashboard');
+                }
+            })
+            .catch(() => {
+                // User is not logged in; remain on login page
+            });
+    }, [router, backendUrl]);
 
     const handleGoogleSignIn = (): void => {
         window.location.href = `${backendUrl}/api/auth/google`;
@@ -15,7 +31,6 @@ export default function LoginPage(): JSX.Element {
                 <h1 style={styles.title}>Welcome Back</h1>
                 <p style={styles.subtitle}>Sign in with Google to access your portal</p>
 
-                {/* Google Login */}
                 <button onClick={handleGoogleSignIn} type="button" style={styles.googleBtn}>
                     <svg style={styles.icon} viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
