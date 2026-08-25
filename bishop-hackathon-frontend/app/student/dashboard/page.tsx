@@ -14,39 +14,45 @@ export default function StudentDashboard(): JSX.Element {
     }, []);
 
     return (
-        <div style={styles.container}>
+        <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto p-4 sm:p-6 text-slate-100 min-h-screen">
             {/* Header Section */}
-            <header style={styles.header}>
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-4 gap-2">
                 <div>
-                    <h1 style={styles.heading}>Dashboard Overview</h1>
-                    <p style={styles.subheading}>{greeting} — Track your learning path and progress.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                        Dashboard Overview
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                        {greeting} — Track your learning path and progress.
+                    </p>
                 </div>
             </header>
 
-            {/* Quick Metrics Grid */}
-            <section style={styles.gridSection}>
-                <div style={styles.grid}>
+            {/* Quick Metrics Grid: 1 col on mobile, 3 cols on desktop */}
+            <section className="w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <StatCard label="Enrolled Courses" value="4" />
                     <StatCard label="Assignments Due" value="2" />
                     <StatCard label="Attendance" value="94%" />
                 </div>
             </section>
 
-            {/* Two-Column Core Layout (Main Content + Sidebar Announcements) */}
-            <div style={styles.layoutGrid}>
-                {/* Main Interactive AI Roadmap */}
-                <main style={styles.mainColumn}>
+            {/* Two-Column Layout: Stacks vertically on mobile, 2 cols on desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                {/* Main Content (AI Roadmap) - Spans 2 cols on Desktop */}
+                <main className="lg:col-span-2 flex flex-col gap-6 min-w-0 w-full">
                     <AIRoadmapWidget />
                 </main>
 
-                {/* Secondary Content Side Panel */}
-                <aside style={styles.sideColumn}>
-                    <div style={styles.section}>
-                        <div style={styles.sectionHeader}>
-                            <h2 style={styles.sectionTitle}>Announcements</h2>
-                            <span style={styles.badge}>Live</span>
+                {/* Secondary Content (Announcements Sidebar) - 1 col on Desktop */}
+                <aside className="w-full flex flex-col gap-6">
+                    <div className="bg-slate-900/90 backdrop-blur-sm p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold text-white">Announcements</h2>
+                            <span className="bg-sky-500/10 text-sky-400 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-sky-500/20">
+                                Live
+                            </span>
                         </div>
-                        <div style={styles.announcementsList}>
+                        <div className="flex flex-col gap-3">
                             <AnnouncementCard
                                 title="Hackathon Registration Open"
                                 description="Submit your project ideas before Friday midnight."
@@ -62,92 +68,3 @@ export default function StudentDashboard(): JSX.Element {
         </div>
     );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        width: '100%',
-        padding: '0.5rem',
-    },
-    header: {
-        display: 'flex',
-        justify: 'space-between',
-        alignItems: 'flex-start',
-        borderBottom: '1px solid #1e293b',
-        paddingBottom: '1rem',
-    },
-    heading: {
-        fontSize: '1.75rem',
-        fontWeight: '700',
-        color: '#f8fafc',
-        margin: 0,
-        letterSpacing: '-0.025em',
-    },
-    subheading: {
-        fontSize: '0.9rem',
-        color: '#94a3b8',
-        margin: '0.4rem 0 0 0',
-    },
-    gridSection: {
-        width: '100%',
-    },
-    grid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '1.25rem',
-    },
-    layoutGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '2rem',
-        alignItems: 'start',
-    },
-    mainColumn: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-        minWidth: 0, // Prevents flex/grid overflowing on child code blocks
-    },
-    sideColumn: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-    },
-    section: {
-        backgroundColor: '#1e293b',
-        padding: '1.5rem',
-        borderRadius: '16px',
-        border: '1px solid #334155',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
-    },
-    sectionHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '1.25rem',
-    },
-    sectionTitle: {
-        fontSize: '1.15rem',
-        fontWeight: '600',
-        color: '#f8fafc',
-        margin: 0,
-    },
-    badge: {
-        backgroundColor: '#0284c720',
-        color: '#38bdf8',
-        fontSize: '0.75rem',
-        fontWeight: '600',
-        padding: '0.2rem 0.6rem',
-        borderRadius: '9999px',
-        border: '1px solid #0369a140',
-    },
-    announcementsList: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-    },
-};
