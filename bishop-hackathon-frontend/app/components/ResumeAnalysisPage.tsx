@@ -24,15 +24,23 @@ export default function ResumeAnalysisPage() {
     const [error, setError] = useState<string | null>(null);
     const [report, setReport] = useState<ResumeAnalysisReport | null>(null);
 
+    const validateAndSetFile = (selectedFile: File) => {
+        if (selectedFile.type !== 'application/pdf') {
+            setError('Please upload a valid PDF document.');
+            return false;
+        }
+        if (selectedFile.size > 10 * 1024 * 1024) {
+            setError('File size exceeds the 10MB limit.');
+            return false;
+        }
+        setError(null);
+        setFile(selectedFile);
+        return true;
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            const selectedFile = e.target.files[0];
-            if (selectedFile.type !== 'application/pdf') {
-                setError('Please upload a valid PDF document.');
-                return;
-            }
-            setError(null);
-            setFile(selectedFile);
+            validateAndSetFile(e.target.files[0]);
         }
     };
 
@@ -49,13 +57,7 @@ export default function ResumeAnalysisPage() {
         e.preventDefault();
         setIsDragging(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            const droppedFile = e.dataTransfer.files[0];
-            if (droppedFile.type !== 'application/pdf') {
-                setError('Please upload a valid PDF document.');
-                return;
-            }
-            setError(null);
-            setFile(droppedFile);
+            validateAndSetFile(e.dataTransfer.files[0]);
         }
     };
 
@@ -69,8 +71,11 @@ export default function ResumeAnalysisPage() {
         setLoading(true);
         setError(null);
 
+        // --- SAFE FORM DATA PAYLOAD ---
         const formData = new FormData();
+        // Append both 'file' and 'resume' field names so Multer detects it regardless of backend route config
         formData.append('file', file);
+        formData.append('resume', file);
 
         try {
             const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -78,19 +83,29 @@ export default function ResumeAnalysisPage() {
 
             const res = await fetch(`${baseUrl}/api/resume-analysis`, {
                 method: 'POST',
-                body: formData,
+                body: formData, // NOTE: Do NOT explicitly set 'Content-Type' header here
             });
 
-            const data = await res.json();
+            // Inspect response headers before reading stream
+            const contentType = res.headers.get('content-type');
+            let data: any = {};
+
+            if (contentType && contentType.includes('application/json')) {
+                data = await res.json();
+            } else {
+                const textResponse = await res.text();
+                throw new Error(textResponse || `Server returned response with status ${res.status}`);
+            }
 
             if (!res.ok) {
-                throw new Error(data.error || 'Failed to analyze resume structure.');
+                throw new Error(data.error || data.details || `Server returned error (${res.status})`);
             }
 
             const reportData: ResumeAnalysisReport = data.data ? data.data : data;
             setReport(reportData);
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'An error occurred during scanning.');
+            console.error('Frontend Fetch Error:', err);
+            setError(err instanceof Error ? err.message : 'An unexpected error occurred during scanning.');
         } finally {
             setLoading(false);
         }
@@ -352,7 +367,7 @@ export default function ResumeAnalysisPage() {
                         </div>
                     </div>
 
-                    {/* Actionable Tree-Structured Recommendations */}
+                    {/* Actionable Recommendations */}
                     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-8 shadow-md">
                         <div className="flex items-center space-x-3 border-b border-slate-800 pb-5">
                             <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
