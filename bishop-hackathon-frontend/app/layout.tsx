@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CareerSphere AI | Next-Gen AI Career Path Engine',
+  title: 'Path Pilot',
   description: 'AI-driven career roadmaps, real-time skill-gap detection, and automated resume analysis.',
 };
 

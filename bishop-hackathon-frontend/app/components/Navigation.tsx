@@ -18,16 +18,13 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                     <Sparkles className="h-4 w-4" />
                 </div>
                 <span className="text-xs sm:text-sm font-bold tracking-tight text-white">
-                    Career AI Suite
+                    Path Pilot
                 </span>
             </div>
 
             {/* Status Indicator & Right Side Auth Actions */}
             <div className="flex items-center gap-2 sm:gap-3 pr-1 sm:pr-2">
-                <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 mr-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>AI Ready</span>
-                </div>
+
 
                 <Link
                     href="/auth/login"
