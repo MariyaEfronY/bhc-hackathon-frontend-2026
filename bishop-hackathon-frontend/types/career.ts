@@ -78,6 +78,15 @@
 
 // types/career.ts
 
+// --- Generic API Wrapper ---
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+}
+
+// --- DualModeJobSearch Types ---
 export interface JobListing {
   title: string;
   company: string;
@@ -94,6 +103,7 @@ export interface CareerAnalysisData {
   jobListings?: JobListing[];
 }
 
+// --- ResumeAnalysisPage Types ---
 export interface DomainAlignment {
   evaluation?: string;
   keyGaps?: string[];
@@ -116,12 +126,4 @@ export interface ResumeAnalysisReport {
   projectInsights?: ProjectInsights;
   domainAlignment?: DomainAlignment;
   recommendations?: string[];
-}
-
-// ⬇️ ADD THIS MISSING EXPORT
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
 }
